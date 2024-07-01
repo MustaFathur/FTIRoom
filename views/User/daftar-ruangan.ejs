@@ -1,0 +1,42 @@
+<%- include('head') %>
+<!-- Card Blog -->
+<div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+    <!-- Title -->
+    <div class="max-w-2xl mx-auto text-center mb-10 lg:mb-14">
+      <h2 class="text-2xl font-bold md:text-4xl md:leading-tight">Daftar Ruangan di Gedung: <%= gedung.nama_gedung %></h2>
+      <p class="mt-1 text-gray-600">See how game-changing companies are making the most of every engagement with Preline.</p>
+    </div>
+    <!-- End Title -->
+  
+    <!-- Grid -->
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% ruangans.forEach((ruangan) => { %>
+        <!-- Card -->
+      <a class="group flex flex-col h-full border border-gray-200 hover:border-transparent hover:shadow-lg transition-all duration-300 rounded-xl p-5" href="#">
+        <div class="aspect-w-16 aspect-h-11">
+          <img class="w-full object-cover rounded-xl" src="/uploads/ruangan/<%= ruangan.gambar_ruangan %>" alt="gambar_ruangan">
+        </div>
+        <div class="my-6">
+          <h3 class="text-xl font-semibold text-gray-800">
+            Nama Ruangan: <%= ruangan.nama_ruangan %>
+          </h3>
+          <p class="mt-1 text-gray-600">
+            Kapasitas: <%= ruangan.kapasitas %>
+          </p>
+          <p class="mt-1 text-gray-600">
+            Fasilitas: <%= ruangan.fasilitas %>
+          </p>
+        </div>
+        <div class="mt-auto flex items-center gap-x-3">
+          <div>
+            <h5 class="text-sm text-gray-800">Status Ketersediaan: <%= ruangan.status_ketersediaan %></h5>
+          </div>
+        </div>
+      </a>
+      <!-- End Card -->
+      <% }); %>
+    </div>
+    <!-- End Grid -->
+  </div>
+  <!-- End Card Blog -->
+<%- include('footer.ejs') %> 
