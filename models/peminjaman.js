@@ -52,7 +52,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       allowNull: true
     },
-    status_peminjaman: DataTypes.ENUM('Menunggu', 'Diterima', 'Ditolak'),
+    status_peminjaman: DataTypes.ENUM('Menunggu', 'Diterima', 'Ditolak', 'Selesai'),
     alasan_penolakan: {
       type: DataTypes.STRING,
       allowNull: true

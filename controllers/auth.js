@@ -7,7 +7,7 @@ const registerForm = (req, res) => {
 }
  
 const register = async (req, res) => {
-    try {
+    try { 
         const username = req.body.username;
         const email = req.body.email;
         const password = req.body.password;
@@ -82,7 +82,7 @@ const login = async (req, res) => {
             req.flash('message', message);
             req.flash('messageType', messageType);
             return res.redirect('/auth/login');
-        }
+        }   
 
         const isEmail = emailOrUsername.includes('@');
         const user = isEmail ? await User.findOne({where: {email: emailOrUsername}}) : await User.findOne({where: {username: emailOrUsername}})
@@ -97,7 +97,7 @@ const login = async (req, res) => {
 
         const checkPassword = await bcrypt.compare(password, user.password);
         if(!checkPassword) {
-            message = "Password salah";
+            message = "Username atau password salah";
             messageType = "error";
             req.flash('message', message);
             req.flash('messageType', messageType);

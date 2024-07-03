@@ -160,54 +160,16 @@ const pinjamRuangan = async (req, res, next) => {
     try {
         const { id_ruangan, alasan_peminjaman, tanggal_peminjaman, jam_mulai, jam_selesai } = req.body;
         const id_user = req.session.user.id;
-        const overlappingBooking = await DetailPeminjaman.findOne({
-            where: {
-                id_ruangan: id_ruangan,
-                tanggal_peminjaman: tanggal_peminjaman,
-                [Op.or]: [
-                    {
-                        jam_mulai: {
-                            [Op.lt]: jam_selesai,
-                            [Op.gt]: jam_mulai
-                        }
-                    },
-                    {
-                        jam_selesai: {
-                            [Op.gt]: jam_mulai,
-                            [Op.lt]: jam_selesai
-                        }
-                    },
-                    {
-                        [Op.and]: [
-                            {
-                                jam_mulai: {
-                                    [Op.lte]: jam_mulai
-                                }
-                            },
-                            {
-                                jam_selesai: {
-                                    [Op.gte]: jam_selesai
-                                }
-                            }
-                        ]
-                    }
-                ]
-            }
-        });
-
-        if (overlappingBooking) {
-            return res.status(400).json({ message: 'Ruangan sudah dipinjam pada waktu tersebut.' });
-        }
 
         const peminjam = await Peminjam.findOne({ where: { id_user: id_user } });
 
         const newPeminjaman = await Peminjaman.create({
             id_peminjam: peminjam.id_peminjam,
             id_admin: null,
-            alasan_peminjaman: alasan_peminjaman,
             tanggal_pengajuan: new Date().toISOString(),
-            status_peminjaman: 'Menunggu',
+            alasan_peminjaman: alasan_peminjaman,
             tanggal_keputusan: null,
+            status_peminjaman: 'Menunggu',
             alasan_penolakan: null,
             tanggal_pengembalian: null
         });
@@ -276,19 +238,14 @@ const pinjamRuanganById = async (req, res, next) => {
             return res.status(404).json({ message: 'Ruangan tidak ditemukan' })      
         }
 
-        // if(ruangan)
-
-        const status_peminjaman = 'Menunggu';
-        let tanggal_pengajuan = new Date().toLocaleDateString();
-
         const newPeminjaman = await Peminjaman.create(
             {
                 id_peminjam: peminjam.id_peminjam,
                 id_admin: null,
-                alasan_peminjaman,
-                tanggal_pengajuan,
-                status_peminjaman,
+                tanggal_pengajuan: new Date().toLocaleDateString(),
+                alasan_peminjaman: alasan_peminjaman,
                 tanggal_keputusan: null,
+                status_peminjaman: 'Menunggu',
                 alasan_penolakan: null,
                 tanggal_pengembalian: null
             }
@@ -315,33 +272,13 @@ const dataPeminjaman = async (req, res, next) => {
     try {
         const id_user = req.session.user.id;
         const peminjam = await Peminjam.findOne({where: {id_user: id_user} });
-        const currentDateTime = moment().format('YYYY-MM-DD HH:mm:ss')
 
         const peminjamans = await Peminjaman.findAll({
             where: {
                 id_peminjam: peminjam.id_peminjam,
-                [Op.or]: [
-                    { status_peminjaman: 'Menunggu' },
-                    {
-                        status_peminjaman: 'Diterima',
-                        [Op.or]: [
-                            { '$detail_peminjamans.tanggal_peminjaman$': { [Op.gt]: currentDateTime.split(' ')[0] } },
-                            {
-                                '$detail_peminjamans.tanggal_peminjaman$': currentDateTime.split(' ')[0],
-                                [Op.and]: [
-                                    sequelize.where(
-                                        sequelize.fn('CONCAT',
-                                            sequelize.col('detail_peminjamans.tanggal_peminjaman'),
-                                            ' ',
-                                            sequelize.col('detail_peminjamans.jam_selesai')
-                                        ),
-                                        { [Op.gt]: currentDateTime }
-                                    )
-                                ]
-                            }
-                        ]
-                    }
-                ]
+                status_peminjaman: {
+                    [Op.in]: ['Menunggu', 'Diterima']
+                }
             },
             attributes: ['id_peminjaman', 'alasan_peminjaman', 'status_peminjaman'],
             include: [
@@ -367,9 +304,7 @@ const dataPeminjaman = async (req, res, next) => {
             ]
         });
 
-
         res.render('User/data-peminjaman', {title: 'Data Peminjaman', peminjamans})
-
     } catch (error) {
         next(error);
     }
@@ -399,43 +334,70 @@ const batalPeminjaman = async (req, res, next) => {
     }
 }
 
+const selesaiPeminjaman = async (req, res, next) => {
+    const {id_peminjaman} = req.params;
+    const id_user = req.session.user.id;
+
+    try {
+        const peminjam = await Peminjam.findOne( {where: {id_user: id_user} });
+        const peminjaman = await Peminjaman.findOne(
+            {
+                where: {id_peminjaman, id_peminjam: peminjam.id_peminjam},
+                include: {
+                    model: DetailPeminjaman,
+                    as: 'detail_peminjamans'
+                }
+            }
+        )
+
+        const detail_peminjaman = await DetailPeminjaman.findOne({ where: {id_peminjaman} });
+
+        if (!peminjaman || !detail_peminjaman) {
+            return res.status(404).json({ message: 'Peminjaman tidak ditemukan!' });
+        }
+
+        await Peminjaman.update(
+            {
+                status_peminjaman: 'Selesai',
+                tanggal_pengembalian: new Date().toISOString()
+            },
+            {
+                where: {id_peminjaman}
+            }
+        )
+
+        await Ruangan.update(
+            {
+                status_ketersediaan: 'Tersedia'
+            },
+            {
+                where: {id_ruangan: detail_peminjaman.id_ruangan}
+            }
+        )
+        
+        res.redirect('/data-peminjaman');
+    } catch (error) {
+        next(error);
+    }
+}
+
 const riwayatPeminjaman = async (req, res, next) => {
     
     const id_user = req.session.user.id;
     const peminjam = await Peminjam.findOne({ where: {id_user: id_user} });
-    const currentDateTime = moment().format('YYYY-MM-DD HH:mm:ss');
 
     try {
-        
+    
         const peminjamans = await Peminjaman.findAll(
             {
                 where: {
-
                     id_peminjam: peminjam.id_peminjam,
-                    [Op.or]: [
-                        {
-                            status_peminjaman: 'Ditolak'
-                        },
-                        {
-                            status_peminjaman: 'Disetujui',
-                            '$detail_peminjamans.tanggal_peminjaman$': { [Op.lt]: currentDateTime.split(' ')[0] },
-                            [Op.and]: [
-                                sequelize.where(
-                                    sequelize.fn('CONCAT',
-                                        sequelize.col('detail_peminjamans.tanggal_peminjaman'),
-                                        ' ',
-                                        sequelize.col('detail_peminjamans.jam_selesai')
-                                    ),
-                                    {
-                                        [Op.lt]: currentDateTime
-                                    }
-                                )
-                            ]
-                        }
-                    ]
-                
+                    status_peminjaman: {[Op.in]: ['Ditolak', 'Selesai']}
                 },
-                attributes: ['id_peminjaman', 'alasan_peminjaman', 'tanggal_pengajuan', 'status_peminjaman', 'tanggal_keputusan', 'alasan_penolakan'],
+                attributes: [
+                    'id_peminjaman', 'alasan_peminjaman', 'tanggal_pengajuan', 'status_peminjaman',
+                    'tanggal_keputusan', 'alasan_penolakan', 'tanggal_pengembalian'
+                ],
                 include: [
                     {
                         model: DetailPeminjaman,
@@ -483,5 +445,6 @@ module.exports = {
     pinjamRuangan,
     dataPeminjaman,
     batalPeminjaman,
+    selesaiPeminjaman,
     riwayatPeminjaman
 }

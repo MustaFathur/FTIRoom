@@ -28,7 +28,7 @@ module.exports = {
         type: Sequelize.DATEONLY
       },
       gender: {
-        type: Sequelize.STRING
+        type: Sequelize.ENUM('Laki-laki', 'Perempuan')
       },
       jurusan: {
         type: Sequelize.STRING

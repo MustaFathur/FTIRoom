@@ -1,13 +1,36 @@
 const { Op, where } = require('sequelize');
 const {User, Peminjam, Admin, Gedung, Ruangan, Peminjaman, DetailPeminjaman} = require('../models')
-const upload = require('multer');   
-const peminjaman = require('../models/peminjaman');
-const schedule = require('node-schedule');
 
-const dashboard = async (req, res) => {
+const dashboard = async (req, res, next) => {
+    try {
+        const totalUsers = await User.count({ where: {role: 'peminjam'} });
+        const totalGedung = await Gedung.count();
+        const totalRuangan = await Ruangan.count();
+        const totalRuanganDipinjam = await Ruangan.count({ where: {status_ketersediaan: 'Dipinjam'} });
+        const gedungs = await Gedung.findAll();
 
-    const gedungs = await Gedung.findAll();
-    res.render('Admin/dashboard', {tittle: 'Dashboard', currentPage: 'dashboard', gedungs})
+        console.log(totalUsers)
+
+        const peminjams = await Peminjam.findAll(
+            {
+                attributes: ['nama', 'alamat', 'jurusan', 'gender', 'tanggal_lahir'],
+                include: [
+                    {
+                        model: User,
+                        as: 'user',
+                        attributes: ['username', 'email', 'no_hp']
+                    }
+                ]
+            }
+        )
+
+
+        res.render('Admin/dashboard', {tittle: 'Dashboard', currentPage: 'dashboard', peminjams, gedungs, totalUsers, totalGedung, totalRuangan, totalRuanganDipinjam})
+    
+    } catch (error) {
+        next(error);
+    } 
+
 }
 
 const daftarGedung = async (req, res, next) => {
@@ -39,19 +62,27 @@ const tambahGedung = async (req, res, next) => {
         const { nama_gedung, alamat } = req.body;
         const gambar_gedung = req.file;
 
-        if (!nama_gedung || !alamat) {
-            return res.status(400).json({ message: 'Nama gedung dan alamat wajib diisi' });
-        }
+        let message = null;
+        let messageType = null;
 
-        if (!gambar_gedung) {
-            return res.status(400).json({ message: 'Gambar wajib diisi' });
+        if (!nama_gedung || !alamat || !gambar_gedung) {
+            message = "Semua field harus diisi",
+            messageType = "error",
+            req.flash('message', message);
+            req.flash('messageType', messageType)
+            return res.redirect('/admin/tambah-gedung');
         }
 
         const imageFileName = gambar_gedung.filename;
 
         const findGedung = await Gedung.findOne({ where: { nama_gedung } });
-        if (findGedung) {
-            return res.status(400).json({ message: 'Nama gedung sudah digunakan' });
+        
+        if (findGedung === nama_gedung) {
+            message = "Nama gedung sudah digunakan!",
+            messageType = "error",
+            req.flash('message', message);
+            req.flash('messageType', messageType)
+            return res.redirect('/admin/tambah-gedung');
         }
 
         await Gedung.create({
@@ -60,10 +91,13 @@ const tambahGedung = async (req, res, next) => {
             gambar_gedung: imageFileName,
         });
 
-        res.status(201).json({ message: 'Gedung berhasil ditambahkan', data: { nama_gedung, alamat, gambar: imageFileName } });
+        message = "Data gedung baru berhasil ditambahkan!",
+        messageType = "success",
+        req.flash('message', message);
+        req.flash('messageType', messageType)
+        return res.redirect('/admin/tambah-gedung');      
     } catch (error) {
         console.error(error.message);
-        res.status(500).json({ message: 'Terjadi kesalahan saat menambah gedung' });
     }
 };
 
@@ -101,24 +135,30 @@ const editGedung = async (req, res, next) => {
     const alamat = req.body.alamat;
     const gambar_gedung = req.file
 
-    if(!gambar_gedung) {
-        return res.status(404).json({ message: 'Gambar harus diunggah!' });
-    }
-
-    const imageFileName = gambar_gedung.filename;
-    const pathImageFile = `uploads/gedung/${imageFileName}`;
-    console.log(pathImageFile);
-
     try {
         if(!nama_gedung || !alamat || !gambar_gedung) {
-            return res.status(404).json({ message: 'Semua field harus diisi!' });
+            message = "Semua field harus diisi!";
+            messageType = "error";
+            req.flash('message', message);
+            req.flash('messageType', messageType);
+            return res.redirect(`/admin/edit-gedung/${id_gedung}`);
         }
 
         const gedung = await Gedung.findOne({ where: {id_gedung} })
 
         if(!gedung) {
-            return res.status(404).json({message: 'Gedung tidak ditemukan'});
+            message = "Gedung tidak ditemukan!";
+            messageType = "error";
+            req.flash('message', message);
+            req.flash('messageType', messageType);
+            return res.redirect(`/admin/edit-gedung/${id_gedung}`);
         }
+
+        
+        const imageFileName = gambar_gedung.filename;
+        const pathImageFile = `uploads/gedung/${imageFileName}`;
+        console.log(pathImageFile);
+
 
         gedung.nama_gedung = nama_gedung;
         gedung.alamat = alamat;
@@ -126,7 +166,11 @@ const editGedung = async (req, res, next) => {
 
         await gedung.save();
 
-        return res.redirect('/admin/daftar-gedung');
+        message = "Berhasil menambah data gedung baru!";
+        messageType = "success";
+        req.flash('message', message);
+        req.flash('messageType', messageType);
+        return res.redirect(`/admin/edit-gedung/${id_gedung}`);
 
     } catch (error) {
         console.error('Error updating gedung:', error);
@@ -191,7 +235,11 @@ const tambahRuangan = async (req, res, next) => {
         const gambar_ruangan = req.file;
 
         if(!nama_ruangan || !kapasitas || !fasilitas || !gambar_ruangan) {
-            return res.status(400).json({ message: 'Semua field harus diisi!' });
+            message = "Semua field harus diisi!";
+            messageType = "error";
+            req.flash('message', message);
+            req.flash('messageType', messageType);
+            return res.redirect(`/admin/tambah-ruangan/${id_gedung}`);
         }
 
         const imageFileName = gambar_ruangan.filename;
@@ -205,7 +253,13 @@ const tambahRuangan = async (req, res, next) => {
             id_gedung
         });
 
-        res.redirect(`/admin/daftar-ruangan/${id_gedung}`);
+        const gedung = await Gedung.findOne({ where: {id_gedung: id_gedung} });
+
+        message = `Berhasil menambahkan data ruangan untuk gedung ${gedung.nama_gedung}!`;
+        messageType = "error";
+        req.flash('message', message);
+        req.flash('messageType', messageType);
+        return res.redirect(`/admin/tambah-ruangan/${id_gedung}`);
     
     } catch (error) {
         next(error)
@@ -246,23 +300,27 @@ const editRuangan = async (req, res) => {
       const { id_ruangan } = req.params;
       const { nama_ruangan, kapasitas, fasilitas } = req.body;
       const gambar_ruangan = req.file;
-
-      if(!gambar_ruangan) {
-        return res.status(404).json({ message: 'Gambar harus diunggah!' });
+  
+      if (!nama_ruangan || !kapasitas || !fasilitas || !gambar_ruangan) {
+        message = "Semua field harus diisi!";
+        messageType = "error";
+        req.flash('message', message);
+        req.flash('messageType', messageType);
+        return res.redirect(`/admin/edit-ruangan/${id_ruangan}`);
       }
-
+      
       const imageFileName = gambar_ruangan.filename;
       const pathImageFile = `uploads/ruangan/${imageFileName}`;
       console.log(pathImageFile);
-  
-      if (!nama_ruangan || !kapasitas || !fasilitas || !gambar_ruangan) {
-        return res.status(400).json({ message: 'Semua field harus diisi!' });
-      }
-  
+
       const ruangan = await Ruangan.findOne({ where: { id_ruangan } });
   
       if (!ruangan) {
-        return res.status(404).json({ message: 'Ruangan tidak ditemukan' });
+        message = "Ruangan tidak ditemukan!";
+        messageType = "error";
+        req.flash('message', message);
+        req.flash('messageType', messageType);
+        return res.redirect(`/admin/edit-ruangan/${id_ruangan}`);
       }
   
       ruangan.nama_ruangan = nama_ruangan;
@@ -271,8 +329,16 @@ const editRuangan = async (req, res) => {
       ruangan.gambar_ruangan = imageFileName;
   
       await ruangan.save();
-  
-      res.redirect(`/admin/daftar-ruangan/${ruangan.id_gedung}`);
+
+      const id_gedung = ruangan.id_gedung;
+      const gedung = await Gedung.findOne( {where: {id_gedung: id_gedung} });
+
+      message = `Berhasil mengubah data ruangan pada gedung ${gedung.nama_gedung}`;
+      messageType = "success";
+      req.flash('message', message);
+      req.flash('messageType', messageType);
+      return res.redirect(`/admin/edit-ruangan/${id_ruangan}`);
+
     } catch (error) {
       res.status(500).json({ message: 'Gagal mengupdate ruangan' });
     }
@@ -282,6 +348,7 @@ const deleteRuangan = async (req, res) => {
     try {
       const { id_ruangan } = req.params;
       const ruangan = await Ruangan.findOne({ where: { id_ruangan } });
+      const id_gedung = ruangan.id_gedung;
   
       if (!ruangan) {
         return res.status(404).json({ message: 'Ruangan tidak ditemukan' });
@@ -296,13 +363,15 @@ const deleteRuangan = async (req, res) => {
 };
 
 const daftarPeminjaman = async (req, res, next) => {
-    try{
-        const id_user = req.session.user.id;
-        const peminjam = await Peminjam.findOne({ where: { id_user: id_user} });
+    try {
         const gedungs = await Gedung.findAll();
 
         const peminjamans = await Peminjaman.findAll({
-            where: {status_peminjaman: 'Menunggu'},
+            where: {
+                status_peminjaman: {
+                    [Op.in]: ['Menunggu', 'Diterima']
+                }
+            },
             attributes: ['id_peminjaman', 'alasan_peminjaman', 'tanggal_pengajuan', 'status_peminjaman'],
             include: [
                 {
@@ -323,7 +392,7 @@ const daftarPeminjaman = async (req, res, next) => {
                         {
                             model: Ruangan,
                             as: 'ruangan',
-                            attributes: ['nama_ruangan'],
+                            attributes: ['nama_ruangan', 'gambar_ruangan'],
                             include: [
                                 {
                                     model: Gedung,
@@ -336,13 +405,13 @@ const daftarPeminjaman = async (req, res, next) => {
                 }
             ]
         });
-        
-        res.render('Admin/daftar-peminjaman', {currentPage:'daftar-peminjaman', tittle: 'Daftar Pengajuan', gedungs,     peminjamans})
-    
+
+        res.render('Admin/daftar-peminjaman', {currentPage: 'daftar-peminjaman', tittle: 'Daftar Pengajuan', gedungs, peminjamans });
     } catch (error) {
         next(error);
     }
 }
+
 
 const terimaPeminjaman = async (req, res, next) => {
 
@@ -380,35 +449,23 @@ const terimaPeminjaman = async (req, res, next) => {
             ]
         })
 
+        const detail_peminjaman = await DetailPeminjaman.findOne({ where: {id_peminjaman}})
+
         if(!peminjaman) {
             return res.status(404).json({ message: 'Peminjaman tidak ditemukan!' });
-        }
+        } else {
 
-        await Peminjaman.update(
-            {
-                id_admin: admin.id_admin,
-                status_peminjaman: 'Diterima',
-                tanggal_keputusan: new Date().toISOString()
-            },
-            {
-                where: {id_peminjaman}
-            }
-        )
+            await Peminjaman.update(
+                {
+                    id_admin: admin.id_admin,
+                    status_peminjaman: 'Diterima',
+                    tanggal_keputusan: new Date().toISOString()
+                },
+                {
+                    where: {id_peminjaman}
+                }
+            ),
 
-        const detail_peminjaman = await DetailPeminjaman.findOne({ where: {id_peminjaman} });
-
-        if(!detail_peminjaman) {
-            return res.status(404).json({ message: 'Peminjaman tidak ditemukan!' });
-        }
-
-        const jam_mulai = detail_peminjaman.jam_mulai;
-        const jam_selesai = detail_peminjaman.jam_selesai;
-        const tanggal_peminjaman = detail_peminjaman.tanggal_peminjaman;
-
-        const mulaiPeminjaman = new Date(`${tanggal_peminjaman} ${jam_mulai}`);
-        const selesaiPeminjaman = new Date(`${tanggal_peminjaman} ${jam_selesai}`);
-
-        schedule.scheduleJob(mulaiPeminjaman, async function () {
             await Ruangan.update(
                 {
                     status_ketersediaan: 'Dipinjam'
@@ -416,19 +473,8 @@ const terimaPeminjaman = async (req, res, next) => {
                 {
                     where: { id_ruangan: detail_peminjaman.id_ruangan }
                 }
-            );
-        });
-
-        schedule.scheduleJob(selesaiPeminjaman, async function () {
-            await Ruangan.update(
-                {
-                    status_ketersediaan: 'Tersedia'
-                },
-                {
-                    where: { id_ruangan: detail_peminjaman.id_ruangan }
-                }
-            );
-        });
+            )
+        }
 
         return res.redirect('/admin/daftar-peminjaman');
     
@@ -483,39 +529,45 @@ const rekapPeminjaman = async (req, res, next) => {
 
         const peminjamans = await Peminjaman.findAll(
             {
-                where: {status_peminjaman: {[Op.not]: 'Menunggu'}},
-                attributes: ['id_peminjaman', 'alasan_peminjaman', 'status_peminjaman', 'tanggal_keputusan'],
-                include: [
-                    {
-                        model: Peminjam,
-                        as: 'peminjam',
-                        attributes: ['nama', 'jurusan']
-                    },
-                    {
-                        model: Admin,
-                        as: 'admin',
-                        attributes: ['nama']
-                    },
-                    {
-                        model: DetailPeminjaman,
-                        as: 'detail_peminjamans',
-                        attributes: ['tanggal_peminjaman', 'jam_mulai', 'jam_selesai'],
-                        include: [
-                            {
-                                model: Ruangan,
-                                as: 'ruangan',
-                                attributes: ['nama_ruangan'],
-                                include: [
-                                    {
-                                        model: Gedung,
-                                        as: 'gedung',
-                                        attributes: ['nama_gedung']
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
+                where: {
+                    status_peminjaman: {[Op.in]: ['Ditolak', 'Selesai']}
+                },
+
+                attributes: [
+                    'id_peminjaman', 'alasan_peminjaman', 'tanggal_pengajuan', 'status_peminjaman',
+                    'tanggal_keputusan', 'alasan_penolakan', 'tanggal_pengembalian'
+                    ],
+                    include: [
+                        {
+                            model: DetailPeminjaman,
+                            as: 'detail_peminjamans',
+                            attributes: ['tanggal_peminjaman', 'jam_mulai', 'jam_selesai'],
+                            include: [
+                                {
+                                    model: Ruangan,
+                                    as: 'ruangan',
+                                    attributes: ['nama_ruangan'],
+                                    include: [
+                                        {
+                                            model: Gedung,
+                                            as: 'gedung',
+                                            attributes: ['nama_gedung']
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            model: Peminjam,
+                            as: 'peminjam',
+                            attributes: ['nama', 'jurusan']
+                        },
+                        {
+                            model: Admin,
+                            as: 'admin',
+                            attributes: ['nama']
+                        }
+                    ]
             }
         )
 

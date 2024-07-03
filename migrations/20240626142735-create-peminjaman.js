@@ -38,7 +38,7 @@ module.exports = {
         allowNull: true
       },
       status_peminjaman: {
-        type: Sequelize.ENUM('Menunggu', 'Diterima', 'Ditolak'),
+        type: Sequelize.ENUM('Menunggu', 'Diterima', 'Ditolak', 'Selesai'),
         defaultValue: 'Menunggu'
       },
       alasan_penolakan: {

@@ -129,18 +129,18 @@
                   </td>
                   <td class="size-px whitespace-nowrap">
                     <div class="px-6 py-3">
-                      <span class="text-sm text-gray-500"><%= peminjaman.status_peminjaman %></span>
+                      <span class="text-sm font-semibold text-gray-800"><%= peminjaman.status_peminjaman %></span>
                     </div>
                   </td>
                   <td class="size-px whitespace-nowrap">
                     <div class="px-6 py-1.5 flex justify-center space-x-2">
-                        <button type="button" data-hs-overlay="#modal-terima-<%= peminjaman.id_peminjaman %>" class="inline-flex items-center text-sm text-blue-600 decoration-2 hover:underline font-medium">
+                        <button type="button" data-hs-overlay="#modal-terima-<%= peminjaman.id_peminjaman %>" class="inline-flex items-center text-sm text-green-600 decoration-2 hover:underline font-medium">
                         Terima
                         </button>
-                        <button type="button" data-hs-overlay="#modal-detail-<%= peminjaman.id_peminjaman %>" class="inline-flex items-center text-sm text-blue-600 decoration-2 hover:underline font-medium">
+                        <button type="button" data-hs-overlay="#modal-detail-<%= peminjaman.id_peminjaman %>" class="inline-flex items-center text-sm text-green-600 decoration-2 hover:underline font-medium">
                             Detail
                         </a>
-                        <button type="button" data-hs-overlay="#modal-tolak-<%= peminjaman.id_peminjaman %>" class="inline-flex items-center text-sm text-blue-600 decoration-2 hover:underline font-medium">
+                        <button type="button" data-hs-overlay="#modal-tolak-<%= peminjaman.id_peminjaman %>" class="inline-flex items-center text-sm text-green-600 decoration-2 hover:underline font-medium">
                             Tolak
                         </button>
                     </div>
@@ -165,15 +165,16 @@
                                 <!-- End Icon -->
                         
                                 <h3 class="mb-2 text-xl font-bold text-gray-800">
-                                    Task successfully created!
+                                  Terima Pengajuan Peminjaman?
                                 </h3>
                                 <p class="text-gray-500">
-                                    You can see the progress of your task in your <a class="inline-flex items-center gap-x-1.5 text-blue-600 decoration-2 hover:underline font-medium" href="#">personal account.</a> You will be notified of its completion.
+                                  Nama: <%= peminjaman.peminjam.nama %> <br>
+                                  Ruangan: <%= detail.ruangan.nama_ruangan %>
                                 </p>
                         
                                 <div class="mt-6 flex justify-center gap-x-4">
                                     <form action="/admin/terima-peminjaman/<%= peminjaman.id_peminjaman %>" method="post">
-                                        <button type="submit" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none">
+                                        <button type="submit" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-green-100 disabled:opacity-50 disabled:pointer-events-none">
                                             Terima
                                         </button>
                                     </form>
@@ -194,23 +195,23 @@
                                 </div>
                           
                                 <div class="aspect-w-16 aspect-h-8">
-                                  <img class="w-full object-cover rounded-t-xl" src="https://images.unsplash.com/photo-1648747067020-73f77da74e8f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3425&q=80" alt="Image Description">
+                                  <img class="w-full object-cover rounded-t-xl" src="/uploads/ruangan/<%= detail.ruangan.gambar_ruangan %>" alt="gambar_ruangan">
                                 </div>
                           
                                 <div class="p-4 sm:p-10 text-center overflow-y-auto">
                                   <h3 class="mb-2 text-2xl font-bold text-gray-800">
-                                    Yeahhhh 🎉
+                                    Detail Ruangan yang Diajukan
                                   </h3>
                                   <p class="text-gray-500">
-                                    Thank you for your subscription. You will be sent the next issue of our newsletter shortly.
+                                    <%= detail.ruangan.nama_ruangan %>
                                   </p>
                           
                                   <div class="mt-6 flex justify-center gap-x-4">
-                                    <button type="button" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none" data-hs-overlay="#modal-detail-<%= peminjaman.id_peminjaman %>">
-                                      Got it
+                                    <button type="button" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:pointer-events-none" data-hs-overlay="#modal-detail-<%= peminjaman.id_peminjaman %>">
+                                      Woke
                                     </button>
-                                    <a class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:pointer-events-none" href="#">
-                                      Settings
+                                    <a class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-green-600 hover:text-green-800 disabled:opacity-50 disabled:pointer-events-none" href="#">
+                                      Yapping
                                     </a>
                                   </div>
                                 </div>
@@ -236,13 +237,13 @@
                                 <form action="/admin/tolak-peminjaman/<%= peminjaman.id_peminjaman %>" method="post">
                                 <div class="p-4 overflow-y-auto">
                                   <label for="alasan_penolakan" class="block text-sm font-medium mb-2">Alasan Penolakan</label>
-                                  <textarea name="alasan_penolakan" id="alasan_penolakan" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Alasan Penolakan" autofocus=""></textarea>
+                                  <textarea name="alasan_penolakan" id="alasan_penolakan" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-green-500 focus:ring-green-500" placeholder="Alasan Penolakan" autofocus=""></textarea>
                                 </div>
                                 <div class="flex justify-end items-center gap-x-2 py-3 px-4 border-t">
                                   <button type="button" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none" data-hs-overlay="#modal-tolak-<%= peminjaman.id_peminjaman %>">
                                     Close
                                   </button>
-                                  <button type="submit" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+                                  <button type="submit" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:pointer-events-none">
                                     Tolak
                                   </button>
                                 </form>
@@ -264,20 +265,6 @@
                 <p class="text-sm text-gray-600">
                   <span class="font-semibold text-gray-800">12</span> results
                 </p>
-              </div>
-  
-              <div>
-                <div class="inline-flex gap-x-2">
-                  <button type="button" class="py-1.5 px-2 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none">
-                    <svg class="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-                    Prev
-                  </button>
-  
-                  <button type="button" class="py-1.5 px-2 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none">
-                    Next
-                    <svg class="flex-shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-                  </button>
-                </div>
               </div>
             </div>
             <!-- End Footer -->

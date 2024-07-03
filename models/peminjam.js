@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
     nama: DataTypes.STRING,
     alamat: DataTypes.STRING,
     tanggal_lahir: DataTypes.DATE,
-    gender: DataTypes.STRING,
+    gender: DataTypes.ENUM('Laki-laki', 'Perempuan'),
     jurusan: DataTypes.STRING
   }, {
     sequelize,

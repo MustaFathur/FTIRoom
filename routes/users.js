@@ -22,6 +22,7 @@ router.post('/pinjam-ruangan/:id_ruangan', authMiddleware, roleMiddleware('pemin
 router.get('/data-peminjaman', authMiddleware, roleMiddleware('peminjam'), user.dataPeminjaman);
 router.get('/detail-peminjaman/:id_peminjaman');
 router.post('/batal-peminjaman/:id_peminjaman', authMiddleware, roleMiddleware('peminjam'), user.batalPeminjaman)
+router.post('/selesai-peminjaman/:id_peminjaman', authMiddleware, roleMiddleware('peminjam'), user.selesaiPeminjaman)
 router.get('/riwayat-peminjaman', authMiddleware, roleMiddleware('peminjam'), user.riwayatPeminjaman)
 
 module.exports = router;
