@@ -1,0 +1,74 @@
+<%- include('head') %>
+<!-- Card Section -->
+<div class="max-w-2xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+    <!-- Card -->
+    <div class="bg-white rounded-xl shadow p-4 sm:p-7">
+      <div class="text-center mb-8">
+        <h2 class="text-2xl md:text-3xl font-bold text-gray-800">
+          Peminjaman
+        </h2>
+        <p class="text-sm text-gray-600">
+          Form Peminjaman Ruangan.
+        </p>
+      </div>
+  
+      <form action="/pinjam-ruangan/<%= ruangan.id_ruangan%>" method="post">
+        <input type="hidden" name="id_ruangan" value="<%= ruangan.id_ruangan%>">
+        <!-- Section -->
+        <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200">
+          <label for="af-payment-billing-contact" class="inline-block text-sm font-medium">
+            Data Ruangan
+          </label>
+  
+          <div class="mt-2 space-y-3">
+            <input readonly value="Nama Ruangan: <%= ruangan.nama_ruangan %>" class="py-2 px-3 pe-11 block w-full border border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+            <div class="grid sm:flex gap-3">
+                <input readonly value="Kapasitas: <%= ruangan.kapasitas %>" class="py-2 px-3 pe-11 block w-full border border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+                <input readonly value="Fasilitas: <%= ruangan.fasilitas %>" class="py-2 px-3 pe-11 block w-full border border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" >
+              </div>            
+            <input readonly value="Alamat: <%= ruangan.gedung.nama_gedung %>, <%= ruangan.gedung.alamat %>" class="py-2 px-3 pe-11 block w-full border border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+          </div>
+        </div>
+        <!-- End Section -->
+  
+        <!-- Section -->
+        <div class="py-6 first:pt-0 last:pb-0 border-t first:border-transparent border-gray-200">
+          <label for="alasan_peminjaman" class="inline-block text-sm font-medium">
+            Data Pengajuan
+          </label>
+  
+          <div class="mt-2 space-y-3">
+            <textarea name="alasan_peminjaman" id="alasan_peminjaman" class="py-2 px-3 pe-11 block w-full border border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="Alasan Peminjaman"></textarea>
+            <label for="tanggal_peminjaman" class="inline-block text-sm font-medium">
+                Tanggal
+            </label>
+            <input name="tanggal_peminjaman" id="tanggal_peminjaman" type="date" class="py-2 px-3 pe-11 block w-full border border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+            <div class="grid sm:flex gap-3">
+              <label for="jam_mulai" class="inline-block text-sm font-medium">
+                Jam Mulai
+              </label>
+              <input name="jam_mulai" id="jam_mulai" type="time" class="py-2 px-3 pe-11 block w-full border border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+              <label for="jam_selesai" class="inline-block text-sm font-medium">
+                Jam Selesai
+              </label>
+              <input name="jam_selesai" id="jam_selesai" type="time" class="py-2 px-3 pe-11 block w-full border border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-5 flex justify-end gap-x-2">
+            <a href="/daftar-ruangan/<%= ruangan.id_gedung %>" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none">
+              Batal
+            </a>
+            <button type="submit" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+              Ajukan
+            </button>
+          </div>
+        <!-- End Section -->
+      </form>
+
+    </div>
+    <!-- End Card -->
+  </div>
+  <!-- End Card Section -->
+<%- include('footer.ejs') %> 

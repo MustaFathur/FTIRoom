@@ -12,11 +12,11 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       User.hasMany(models.Peminjam, {
         foreignKey: 'id_user',
-        as: 'user'
-      }),
+        as: 'peminjams'
+      }), 
       User.hasMany(models.Admin, {
         foreignKey: 'id_user',
-        as: 'admin'
+        as: 'admins'
       })
     }
   }

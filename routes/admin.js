@@ -19,14 +19,12 @@ router.get('/tambah-ruangan/:id_gedung', authMiddleware, roleMiddleware('admin')
 router.post('/tambah-ruangan/:id_gedung', authMiddleware, roleMiddleware('admin'), upload.single('gambar_ruangan'), admin.tambahRuangan);
 router.get('/detail-ruangan/:id_ruangan', authMiddleware, roleMiddleware('admin'), admin.detailRuangan);
 router.get('/edit-ruangan/:id_ruangan', authMiddleware, roleMiddleware('admin'), admin.editRuanganForm);
-router.post('/edit-ruangan/:id_ruangan', authMiddleware, roleMiddleware('admin'), admin.editRuangan);
+router.post('/edit-ruangan/:id_ruangan', authMiddleware, roleMiddleware('admin'), upload.single('gambar_ruangan'), admin.editRuangan);
 router.post('/delete-ruangan/:id_ruangan', authMiddleware, roleMiddleware('admin'), admin.deleteRuangan);
 
-router.get('/daftar-peminjaman')
-router.get('/detail-peminjaman/:id_peminjaman')
-router.post('/approve-peminjaman:id_peminjaman')
-router.get('/tolak-peminjaman:id_peminjaman')
-router.post('/tolak-peminjaman:id_peminjaman')
-router.get('/rekap-peminjaman')
+router.get('/daftar-peminjaman', authMiddleware, roleMiddleware('admin'), admin.daftarPeminjaman)
+router.post('/terima-peminjaman/:id_peminjaman', authMiddleware, roleMiddleware('admin'), admin.terimaPeminjaman);
+router.post('/tolak-peminjaman/:id_peminjaman', authMiddleware, roleMiddleware('admin'), admin.tolakPeminjaman);
+router.get('/rekap-peminjaman', authMiddleware, roleMiddleware('admin'), admin.rekapPeminjaman)
 
 module.exports = router;

@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       }),
       Admin.hasMany(models.Peminjaman, {
         foreignKey: 'id_admin',
-        as: 'admin'
+        as: 'peminjamans'
       }
       )
     }
@@ -27,7 +27,14 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       autoIncrement: true
     },
-    id_user: DataTypes.INTEGER,
+    id_user: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Users',
+        key: 'id'
+      }
+    },
     nama: DataTypes.STRING,
     alamat: DataTypes.STRING
   }, {

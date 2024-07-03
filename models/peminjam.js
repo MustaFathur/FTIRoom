@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     }),
     Peminjam.hasMany(models.Peminjaman, {
       foreignKey: 'id_peminjam',
-      as: 'peminjam'
+      as: 'peminjamans'
     })
     }
   }
@@ -26,7 +26,14 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       autoIncrement: true
     },
-    id_user: DataTypes.INTEGER,
+    id_user: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Users',
+        key: 'id'
+      }
+    },
     nama: DataTypes.STRING,
     alamat: DataTypes.STRING,
     tanggal_lahir: DataTypes.DATE,

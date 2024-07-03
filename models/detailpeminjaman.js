@@ -21,8 +21,24 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   DetailPeminjaman.init({
-    id_peminjaman: DataTypes.INTEGER,
-    id_ruangan: DataTypes.INTEGER,
+    id_peminjaman: {
+      primaryKey: true,
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Peminjamans',
+        key: 'id_peminjaman'
+      }
+    },
+    id_ruangan: {
+      primaryKey: true,
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Ruangans',
+        key: 'id_ruangan'
+      }
+    },
     tanggal_peminjaman: DataTypes.DATE,
     jam_mulai: DataTypes.TIME,
     jam_selesai: DataTypes.TIME

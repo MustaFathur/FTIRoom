@@ -26,7 +26,14 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       autoIncrement: true
     },
-    id_gedung: DataTypes.INTEGER,
+    id_gedung: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Gedungs',
+        key: 'id_gedung'
+      }
+    },
     nama_ruangan: DataTypes.STRING,
     kapasitas: DataTypes.INTEGER,
     fasilitas: DataTypes.STRING,

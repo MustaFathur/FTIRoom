@@ -1,0 +1,40 @@
+<%- include('head') %>
+<div class="bg-white border rounded-xl shadow-sm sm:flex mt-10">
+    <div class="flex-shrink-0 relative w-full rounded-t-xl overflow-hidden pt-[40%] sm:rounded-s-xl sm:max-w-60 md:rounded-se-none md:max-w-xs">
+      <img class="size-full absolute top-0 start-0 object-cover" src="https://scontent.fpku7-1.fna.fbcdn.net/v/t1.18169-9/1376369_203711683134029_1036960607_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=f798df&_nc_ohc=KBokfIvQHrwQ7kNvgGvZtLb&_nc_ht=scontent.fpku7-1.fna&oh=00_AYANPT-lc1kahXCnMxJRtk9p4-rLCYxERMxpXNx50HDSOg&oe=66AB7B79" alt="Image Description">
+    </div>
+    <div class="flex flex-wrap">
+      <div class="p-4 flex flex-col h-full sm:p-7">
+        <h3 class="text-lg font-bold text-gray-800">
+          Profil
+        </h3>
+        <p class="mt-1 text-gray-500">
+            Username:  <%= peminjam.user.username %>
+        </p>
+        <p class="mt-1 text-gray-500">
+            Email:  <%= peminjam.user.email %>
+        </p>
+        <p class="mt-1 text-gray-500">
+            No Handphone:  <%= peminjam.user.no_hp %>
+        </p>
+        <p class="mt-1 text-gray-500">
+            Nama:  <%= peminjam.nama %>
+        </p>
+        <p class="mt-1 text-gray-500">
+            Jurusan:  <%= peminjam.jurusan %>
+        </p>
+        <p class="mt-1 text-gray-500">
+            Tanggl Lahir:  <%= peminjam.tanggal_lahir %>
+        </p>
+        <p class="mt-1 text-gray-500">
+            Gender:  <%= peminjam.gender %>
+        </p>
+        <div class="mt-5 sm:mt-auto">
+            <a href="/profil/ubah-data" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:pointer-events-none">
+                Ubah Data
+            </a>
+        </div>
+      </div>
+    </div>
+  </div>
+<%- include('footer.ejs') %> 

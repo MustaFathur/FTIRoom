@@ -1,0 +1,108 @@
+<%- include('head') %>
+<!-- Card Section -->
+<div class="max-w-4xl px-4 py-10 sm:px-6 lg:px-8 mx-auto"><!-- Card -->
+    <div class="bg-white rounded-xl shadow p-4 sm:p-7">
+      <div class="mb-8">
+        <h2 class="text-xl font-bold text-gray-800">
+          Profile
+        </h2>
+        <p class="text-sm text-gray-600">
+          Manajemen profil pengguna.
+        </p>
+      </div>
+  
+      <form action="/profil/ubah-data" method="post">
+        <!-- Grid -->
+        <div class="grid sm:grid-cols-12 gap-2 sm:gap-6">
+  
+          <div class="sm:col-span-3">
+            <label for="af-account-nama" class="inline-block text-sm text-gray-800 mt-2.5">
+              Nama
+            </label>
+          </div>
+          <!-- End Col -->
+  
+          <div class="sm:col-span-9">
+            <input name="nama" id="af-account-jurusan" type="text" class="py-2 px-3 pe-11 block w-full border border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="Nama">
+          </div>
+          <!-- End Col -->
+
+          <div class="sm:col-span-3">
+            <label for="af-account-jurusan" class="inline-block text-sm text-gray-800 mt-2.5">
+              Jurusan
+            </label>
+          </div>
+          <!-- End Col -->
+  
+          <div class="sm:col-span-9">
+            <input name="jurusan" id="af-account-nama" type="text" class="py-2 px-3 pe-11 block w-full border border-gray-200 shadow-sm text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="Jurusan">
+          </div>
+          <!-- End Col -->
+
+          <div class="sm:col-span-3">
+            <div class="inline-block">
+              <label for="af-account-tanggal-lahir" class="inline-block text-sm text-gray-800 mt-2.5">
+                Tanggal Lahir
+              </label>
+            </div>
+          </div>
+          <!-- End Col -->
+  
+          <div class="sm:col-span-9">
+            <div class="sm:flex">
+              <input name="tanggal_lahir" id="af-account-birthdate" type="date" class="py-2 px-3  pe-11 block w-full border border-gray-200 shadow-sm -mt-px -ms-px first:rounded-t-lg last:rounded-b-lg sm:first:rounded-s-lg sm:mt-0 sm:first:ms-0 sm:first:rounded-se-none sm:last:rounded-es-none sm:last:rounded-e-lg text-sm relative focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="tanggal">
+            </div>
+          </div>
+          <!-- End Col -->
+  
+          <div class="sm:col-span-3">
+            <label for="af-account-gender-checkbox" class="inline-block text-sm text-gray-800 mt-2.5">
+              Gender
+            </label>
+          </div>
+          <!-- End Col -->
+  
+          <div class="sm:col-span-9">
+            <div class="sm:flex">
+              <label for="af-account-gender-checkbox" class="flex py-2 px-3 w-full border border-gray-200 shadow-sm -mt-px -ms-px first:rounded-t-lg last:rounded-b-lg sm:first:rounded-s-lg sm:mt-0 sm:first:ms-0 sm:first:rounded-se-none sm:last:rounded-es-none sm:last:rounded-e-lg text-sm relative focus:z-10 focus:border-green-500 focus:ring-green-500 disabled:opacity-50 disabled:pointer-events-none">
+                <input name="gender" type="radio" value="Laki-laki" class="shrink-0 mt-0.5 border-gray-300 rounded-full text-green-600 focus:ring-green-500 disabled:opacity-50 disabled:pointer-events-none" id="af-account-gender-checkbox" checked>
+                <span class="text-sm text-gray-500 ms-3">Laki-laki</span>
+              </label>
+  
+              <label for="af-account-gender-checkbox-female" class="flex py-2 px-3 w-full border border-gray-200 shadow-sm -mt-px -ms-px first:rounded-t-lg last:rounded-b-lg sm:first:rounded-s-lg sm:mt-0 sm:first:ms-0 sm:first:rounded-se-none sm:last:rounded-es-none sm:last:rounded-e-lg text-sm relative focus:z-10 focus:border-green-500 focus:ring-green-500 disabled:opacity-50 disabled:pointer-events-none">
+                <input name="gender" type="radio" value="Perempuan" class="shrink-0 mt-0.5 border-gray-300 rounded-full text-green-600 focus:ring-green-500 disabled:opacity-50 disabled:pointer-events-none" id="af-account-gender-checkbox-female">
+                <span class="text-sm text-gray-500 ms-3">Perempuan</span>
+              </label>
+            </div>
+          </div>
+          <!-- End Col -->
+  
+          <div class="sm:col-span-3">
+            <label for="af-account-alamat" class="inline-block text-sm text-gray-800 mt-2.5">
+              Alamat
+            </label>
+          </div>
+          <!-- End Col -->
+  
+          <div class="sm:col-span-9">
+            <textarea name="alamat" id="af-account-bio" class="py-2 px-3 block w-full border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" rows="6" placeholder="Alamat  "></textarea>
+          </div>
+          <!-- End Col -->
+        </div>
+        <!-- End Grid -->
+  
+        <div class="mt-5 flex justify-end gap-x-2">
+          <a href="/profil" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none">
+            Cancel
+          </a>
+          <button type="submit" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:pointer-events-none">
+            Simpan Perubahan
+          </button>
+        </div>
+      </form>
+
+    </div>
+    <!-- End Card -->
+  </div>
+  <!-- End Card Section -->
+<%- include('footer.ejs') %> 

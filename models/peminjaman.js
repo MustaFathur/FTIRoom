@@ -20,13 +20,32 @@ module.exports = (sequelize, DataTypes) => {
       })
       Peminjaman.hasMany(models.DetailPeminjaman, {
         foreignKey: 'id_peminjaman',
-        as: 'peminjaman'
+        as: 'detail_peminjamans'
       })
     }
   }
   Peminjaman.init({
-    id_peminjam: DataTypes.INTEGER,
-    id_admin: DataTypes.INTEGER,
+    id_peminjaman: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
+    },
+    id_peminjam: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Peminjams',
+        key: 'id_peminjam'
+      }
+    },
+    id_admin: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'Admins',
+        key: 'id_admin'
+      }
+    },
     tanggal_pengajuan: DataTypes.DATE,
     alasan_peminjaman: DataTypes.STRING,
     tanggal_keputusan: {
