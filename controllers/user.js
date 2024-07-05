@@ -8,7 +8,7 @@ const user = require('../models/user');
 const peminjaman = require('../models/peminjaman');
 
 const home = (req, res) => {
-    res.render('User/home', {title: 'Home'});
+    res.render('User/home', {title: 'Home', currentPage: 'home'});
 }
 
 const profil = async (req, res, next) => {
@@ -28,11 +28,11 @@ const profil = async (req, res, next) => {
         }
     )
 
-    res.render('User/profil', {title: 'Profil Pengguna', peminjam})
+    res.render('User/profil', {title: 'Profil Pengguna', currentPage: 'profil', peminjam})
 }
 
 const ubahProfilForm = async (req, res, next) => {
-    res.render('User/ubah-profil', {title: 'Ubah Profil'})
+    res.render('User/ubah-profil', {title: 'Ubah Profil', currentPage: 'ubah-profil'})
 }
 
 const ubahProfil = async (req, res, next) => {
@@ -70,7 +70,7 @@ const ubahProfil = async (req, res, next) => {
 }
 
 const ubahPasswordForm = async (req, res, next) => {
-    res.render('User/ubah-password', {title: 'Ubah Password'})
+    res.render('User/ubah-password', {title: 'Ubah Password', currentPage: 'ubah-password'})
 }
 
 const ubahPassword = async (req, res, next) => {
@@ -117,7 +117,7 @@ const daftarGedung = async (req, res, next) => {
 
     const gedungs = await Gedung.findAll();
 
-    res.render('User/daftar-gedung', {title: 'Daftar Gedung', gedungs})
+    res.render('User/daftar-gedung', {title: 'Daftar Gedung', gedungs, currentPage: 'daftar-ruangan'})
 
 }
 
@@ -137,7 +137,7 @@ const daftarRuangan = async (req, res, next) => {
             return res.status(404).json({ message: 'Gedung tidak ditemukan' });
         }
 
-        res.render('User/daftar-ruangan', {title: `Daftar Ruangan di ${gedung.nama_gedung}`, gedung, ruangans: gedung.ruangans})
+        res.render('User/daftar-ruangan', {title: `Daftar Ruangan di ${gedung.nama_gedung}`, currentPage: 'daftar-ruangan', gedung, ruangans: gedung.ruangans})
     
     } catch (error) {
         next(error)
@@ -147,9 +147,17 @@ const daftarRuangan = async (req, res, next) => {
 const pinjamRuanganForm = async (req, res, next) => {
 
     try {
-        const ruangans = await Ruangan.findAll();
+        const ruangans = await Ruangan.findAll(
+            {
+                include: {
+                    model: Gedung,
+                    as: 'gedung',
 
-        res.render('User/pinjam-ruangan', {title: 'Pinjam Ruangan', ruangans});
+                }
+            }
+        );
+
+        res.render('User/pinjam-ruangan', {title: 'Pinjam Ruangan', currentPage: 'data-peminjaman', ruangans});
 
     } catch (error) {
         next (error);
@@ -209,7 +217,7 @@ const pinjamRuanganFormById = async (req, res, next) => {
         if(!ruangan) {
             return res.status(404).json({ message: 'Ruangan tidak ditemukan' })      
         } else {
-            res.render('User/pinjam-ruangan-id', {title: `Pinjam Ruangan ${ruangan.nama_ruangan}`, ruangan})
+            res.render('User/pinjam-ruangan-id', {title: `Pinjam Ruangan ${ruangan.nama_ruangan}`, currentPage: 'daftar-ruangan', ruangan})
         }
 
     } catch (error) {
@@ -304,7 +312,7 @@ const dataPeminjaman = async (req, res, next) => {
             ]
         });
 
-        res.render('User/data-peminjaman', {title: 'Data Peminjaman', peminjamans})
+        res.render('User/data-peminjaman', {title: 'Data Peminjaman', currentPage: 'data-peminjaman', peminjamans})
     } catch (error) {
         next(error);
     }
@@ -422,7 +430,7 @@ const riwayatPeminjaman = async (req, res, next) => {
             }
         )
 
-        res.render('User/riwayat-peminjaman', {title:'Rekap Peminjaman', peminjamans})
+        res.render('User/riwayat-peminjaman', {title:'Rekap Peminjaman', currentPage: 'riwayat', peminjamans})
     
     } catch (error) {
         next(error)

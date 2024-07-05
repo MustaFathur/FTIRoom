@@ -2,9 +2,8 @@
 <!-- Card Blog -->
 <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
     <!-- Title -->
-    <div class="max-w-2xl mx-auto text-center mb-10 lg:mb-14">
+    <div class="max-w-4xl mx-auto text-center mb-10 lg:mb-14">
       <h2 class="text-2xl font-bold md:text-4xl md:leading-tight">Daftar Ruangan di Gedung: <%= gedung.nama_gedung %></h2>
-      <p class="mt-1 text-gray-600">See how game-changing companies are making the most of every engagement with Preline.</p>
     </div>
     <!-- End Title -->
   
@@ -56,10 +55,10 @@
                 </p>
         
                 <div class="mt-6 flex justify-center gap-x-4">
-                  <a href="/pinjam-ruangan/<%= ruangan.id_ruangan %>" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+                  <a href="/pinjam-ruangan/<%= ruangan.id_ruangan %>" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:pointer-events-none">
                     Pinjam
                   </a>
-                  <button type="button" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:text-blue-400" data-hs-overlay="#modal-<%= ruangan.id_ruangan %>">
+                <button type="button" class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-green-600 hover:text-green-800 disabled:opacity-50 disabled:pointer-events-none dark:text-green-500 dark:hover:text-green-400" data-hs-overlay="#modal-<%= ruangan.id_ruangan %>">
                     Tutup
                   </button>
                 </div>
